@@ -73,6 +73,7 @@
               content="角色分配"
               :enterable="false"
               placement="top"
+              @click="showSetRole(scope.row)"
             >
               <el-button
                 type="warning"
@@ -162,6 +163,41 @@
         <el-button type="primary" @click="editUserInfo">确 定</el-button>
       </span>
     </el-dialog>
+
+    <!-- 分配角色对话框 -->
+
+    <el-dialog
+      title="分配角色"
+      :visible.sync="setRoleDialogVisible"
+      width="50%"
+      
+    >
+      <div>
+        <p>当前用户：{{ userInfo.username }}</p>
+        <p>当前角色：{{ userInfo.role_name }}</p>
+        <p>
+          分配角色：
+          <el-select
+            v-model="selectRoleId"
+            filterable
+            allow-create
+            default-first-option
+            placeholder="请选择文章标签"
+          >
+            <el-option
+              v-for="item in rolesLsit"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id"
+            ></el-option>
+          </el-select>
+        </p>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveRoleInfo">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -193,10 +229,18 @@ export default {
         // 每页显示多少数据
         pagesize: 5,
       },
+      // 分配角色对话框的显示
+      setRoleDialogVisible: false,
       userList: [],
       total: 0,
       addDialogVisible: false,
       editDialogVisible: false,
+      // 当前需要被分配角色的用户
+      userInfo: {},
+      // 角色列表
+      rolesLsit: [],
+      // 已选中的角色id
+      selectRoleId: '',
       editForm: {},
       addForm: {},
       addrules: {
@@ -361,29 +405,56 @@ export default {
     },
     // 删除按钮
     async removeUserById(id) {
-      const confirmRes = await this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      }).catch((err) => err)
+      const confirmRes = await this.$confirm(
+        "此操作将永久删除该文件, 是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).catch((err) => err);
       // 取消
-      if (confirmRes !== 'confirm') {
-        return this.$message.error("已取消删除")
+      if (confirmRes !== "confirm") {
+        return this.$message.error("已取消删除");
       }
-      const {data: res} = await this.$http({
-        method: 'delete',
-        url: 'users/' + id
-      })
+      const { data: res } = await this.$http({
+        method: "delete",
+        url: "users/" + id,
+      });
       // 删除失败
       if (res.meta.status !== 200) {
-        return this.$message.error("删除失败")
+        return this.$message.error("删除失败");
       }
       // 成功
-      this.$message.success("删除成功")
-      this.getUserList()
-     
+      this.$message.success("删除成功");
+      this.getUserList();
+    },
+    // 角色分配按钮的处理
+    async showSetRole(userInfo) {
+      // 保存当前角色信息
+      this.userInfo = userInfo
 
-        
+      const { data: res } = await this.$http.get('roles')
+      if (res.meta.status !== 200) {
+        return this.$message.error('获取角色列表失败！')
+      }
+      this.rolesLsit = res.data
+
+      this.setRoleDialogVisible = true
+    },
+    // 分配角色的确定按钮
+    async saveRoleInfo () {
+      if (!this.selectRoleId) {
+        return this.$message.error('请选择要分配的角色')
+      }
+      const { data: res } = await this.$http.put(`users/${this.userInfo.id}/role`, { rid: this.selectRoleId })
+      if (res.meta.status !== 200) {
+        return this.$message.error('更新用户角色失败！')
+      }
+      this.$message.success('更新角色成功！')
+      this.getUserList()
+      this.setRoleDialogVisible = false
     },
   },
 };
