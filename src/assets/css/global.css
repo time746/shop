@@ -10,12 +10,12 @@ body,
 * {
   box-sizing: border-box;
 }
-
+/* 重置面包屑导航 */
 .el-breadcrumb {
     margin-bottom: 15px;
     font-size: 12px;
 }
-
+/* 重置卡片*/
 .el-card {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15) !important;
 }
@@ -44,4 +44,8 @@ div .el-scrollbar__wrap {
 }
 .ql-editor{
     min-height: 300px;
+}
+
+img {
+  vertical-align: middle;
 }

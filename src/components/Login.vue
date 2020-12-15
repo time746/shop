@@ -99,7 +99,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@fontSize: 50px;
+
 .login_container {
   width: 100vw;
   height: 100vh;
