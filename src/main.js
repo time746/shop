@@ -11,6 +11,10 @@ import 'assets/css/global.css'
 import 'assets/fonts/iconfont.css'
 // 导入axios
 import './network/request.js'
+// 引入 vue table tree
+import TreeTable from 'vue-table-with-tree-grid'
+
+Vue.component('tree-table', TreeTable)
 
 
 
