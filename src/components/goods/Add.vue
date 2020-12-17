@@ -127,7 +127,7 @@ export default {
       },
       addFormRules: {
         goods_name: [
-          { required: true, message: '请输入商品名称', trigger: 'blur' }
+          { required: true, message: '请输111品名称', trigger: 'blur' }
         ],
         goods_price: [
           { required: true, message: '请输入商品价格', trigger: 'blur' }
@@ -212,11 +212,14 @@ export default {
         if (res.meta.status !== 200) {
           return this.$message.error('获取动态参数列表失败！')
         }
+        
         res.data.forEach(item => {
           item.attr_vals =
             item.attr_vals.length === 0 ? [] : item.attr_vals.split(' ')
         })
         this.manyTableData = res.data
+        
+        
       } else if (this.activeIndex === '2') {
         const { data: res } = await this.$http.get(
           `categories/${this.getCateId}/attributes`,
@@ -228,6 +231,7 @@ export default {
           return this.$message.error('获取动态参数列表失败！')
         }
         this.onlyTableData = res.data
+        console.log(this.onlyTableData);
       }
     },
     // 处理图片预览
@@ -246,6 +250,7 @@ export default {
     },
     // 监听图片上传成功事件
     handleSuccess (response) {
+      
       // 1.拼接得到一个图片信息对象 临时路径
       const picInfo = { pic: response.data.tmp_path }
       // 2.将图片信息对象，push到pics数组中

@@ -275,6 +275,7 @@ export default {
     async getParamsData () {
       // 只允许选择三级分类：
       // 通过数组的长度判断
+      
       if (this.selectedCateKeys.length !== 3) {
         this.selectedCateKeys = []
         // 清空表格数据
